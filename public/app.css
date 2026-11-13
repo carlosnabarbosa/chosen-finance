@@ -1,34 +1,49 @@
+/* fonte de título da Taverna do Barlos (servida localmente, sem CDN) */
+@font-face { font-family: "Cinzel Decorative"; font-weight: 400; font-display: swap; src: url(fonts/cinzel-decorative-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Cinzel Decorative"; font-weight: 700; font-display: swap; src: url(fonts/cinzel-decorative-latin-700-normal.woff2) format("woff2"); }
 :root {
-  /* paleta Chosen: principal #00C878, esmeralda #008F63, escuro #064E3B, menta #A7F3D0, profundo #022C22 */
-  --bg: #f5f7f6; --card: #ffffff; --card-2: #f9fbfa; --text: #101c18; --muted: #64746e; --line: #e3e9e6;
-  --accent: #00C878; --on-accent: #022C22; --accent-hover: #00b36b; --chart: #008F63;
-  --brand: #064E3B; --link: #008F63; --accent-soft: #e3f8ee; --in: #008F63;
-  --falta: #dc2626; --warn: #c2410c; --warn-soft: #fdeee5; --sobe: #c2410c; --desce: #008F63;
+  /* paleta Taverna de dia: pergaminho, carvalho e laranja de lamparina */
+  --bg: #f6eddc; --card: #fffaf0; --card-2: #f9f1e2; --text: #2a1d12; --muted: #7a6249; --line: #e0cba6;
+  --accent: #d9731a; --on-accent: #fff8ee; --accent-hover: #b45d14; --chart: #b45d14;
+  --brand: #5e3514; --link: #a9500f; --accent-soft: #f6e0c4; --in: #4f7a3a;
+  --falta: #c4392f; --warn: #a8361f; --warn-soft: #f6dcd2; --sobe: #a8361f; --desce: #4f7a3a;
   --nubank: #8A05BE; --itau: #EC7000;
-  --side: #022C22; --side-text: #cfe9de; --side-muted: #7fa898; --side-ativo: #064E3B;
-  --sombra: 0 1px 2px rgb(16 28 24 / .04), 0 1px 3px rgb(16 28 24 / .06);
-  font: 14px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --side: #2a2017; --side-text: #f1e5d3; --side-muted: #a8937a; --side-ativo: #3a2b1d;
+  --sombra: 0 1px 2px rgb(107 74 35 / .06), 0 1px 3px rgb(107 74 35 / .10);
+  --f-title: "Cinzel Decorative", Georgia, serif;
+  font: 14px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0b1210; --card: #121c19; --card-2: #16221e; --text: #e4efea; --muted: #8aa199; --line: #22312c;
-    --brand: #A7F3D0; --link: #34d399; --accent-soft: #0f3328; --in: #6ee7b7; --chart: #10b981;
-    --falta: #f87171; --warn: #fb923c; --warn-soft: #3a2418; --sobe: #fb923c; --desce: #34d399;
+    /* Taverna à noite: madeira escura, luz de lamparina */
+    --bg: #15100c; --card: #1d1610; --card-2: #241b13; --text: #f1e5d3; --muted: #a8937a; --line: #3a2c1f;
+    --accent: #ec8a2c; --on-accent: #1f1206; --accent-hover: #f2a33a; --chart: #ec8a2c;
+    --brand: #f3b26b; --link: #f3b26b; --accent-soft: #3a2616; --in: #8fbf6e;
+    --falta: #e2574c; --warn: #f07a5a; --warn-soft: #3a1f17; --sobe: #f07a5a; --desce: #8fbf6e;
     --nubank: #C77DFF; --itau: #FF8F2E;
-    --side: #07100d; --side-ativo: #0f3328; --sombra: none; color-scheme: dark;
+    --side: #110d09; --side-text: #f1e5d3; --side-muted: #a8937a; --side-ativo: #3a2b1d; --sombra: none; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0b1210; --card: #121c19; --card-2: #16221e; --text: #e4efea; --muted: #8aa199; --line: #22312c;
-  --brand: #A7F3D0; --link: #34d399; --accent-soft: #0f3328; --in: #6ee7b7; --chart: #10b981;
-  --falta: #f87171; --warn: #fb923c; --warn-soft: #3a2418; --sobe: #fb923c; --desce: #34d399;
+  --bg: #15100c; --card: #1d1610; --card-2: #241b13; --text: #f1e5d3; --muted: #a8937a; --line: #3a2c1f;
+  --accent: #ec8a2c; --on-accent: #1f1206; --accent-hover: #f2a33a; --chart: #ec8a2c;
+  --brand: #f3b26b; --link: #f3b26b; --accent-soft: #3a2616; --in: #8fbf6e;
+  --falta: #e2574c; --warn: #f07a5a; --warn-soft: #3a1f17; --sobe: #f07a5a; --desce: #8fbf6e;
   --nubank: #C77DFF; --itau: #FF8F2E;
-  --side: #07100d; --side-ativo: #0f3328; --sombra: none; color-scheme: dark;
+  --side: #110d09; --side-text: #f1e5d3; --side-muted: #a8937a; --side-ativo: #3a2b1d; --sombra: none; color-scheme: dark;
 }
+.marca span, h1 { font-family: var(--f-title); letter-spacing: .01em; }
+.marca span { color: #f3b26b; }
+/* nome longo com a fonte da Taverna: quebra em duas linhas em vez de cortar */
+.lateral .marca { white-space: normal; min-width: 0; }
+.lateral .marca span { white-space: normal; font-size: 14px; line-height: 1.2; }
+.lateral .marca img { flex: none; }
+:root[data-menu="recolhido"] .lateral .marca span { white-space: nowrap; }
+.lateral { border-right: 1px solid rgb(236 138 44 / .18); }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100vh; }
-h1 { font-size: 22px; margin: 0; letter-spacing: -.02em; font-weight: 650; }
+h1 { font-size: 22px; margin: 0; letter-spacing: .01em; font-weight: 700; }
 h2 { font-size: 14px; margin: 0; font-weight: 600; }
 a { color: var(--link); }
 .mono, .num { font-variant-numeric: tabular-nums; }

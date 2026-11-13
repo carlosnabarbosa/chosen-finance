@@ -24,6 +24,7 @@ const emAberto = () => [...parcelasAbertas(todas), ...parcelasFinanciadas(financ
 
 async function api(metodo, url, corpo) {
   const r = await fetch(url, { method: metodo, body: corpo });
+  if (r.status === 401) { location.href = "/login"; throw new Error("sessão expirada"); }
   // 404 de rota inexistente (servidor desatualizado) vem em texto puro
   const t = await r.text(), j = (() => { try { return JSON.parse(t); } catch { return { erro: `${r.status}: ${t}` }; } })();
   if (!r.ok) throw new Error(j.erro);
@@ -1168,7 +1169,7 @@ $("exportarEvento").addEventListener("click", tentar(async () => {
   const titulo = `${ev.nome} - ${dataBr(ev.data).replaceAll("/", "-")}`;
   status("Gerando PDF…");
   // logo embutida: o desenho no PDF não carrega a imagem pela URL
-  const blob = await (await fetch("logo.png")).blob();
+  const blob = await (await fetch("logo.svg")).blob();
   const logo = await new Promise(ok => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob); });
   // moeda direto, como no resumo copiado: o PDF vai para os amigos mesmo com a tela ocultando
   const pdf = await gerarPdf(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
@@ -1176,34 +1177,34 @@ $("exportarEvento").addEventListener("click", tentar(async () => {
 <style>
   * { box-sizing: border-box; }
   /* folga lateral: o desenho no PDF corta o que encosta na margem */
-  body { margin: 0; padding: 0 3px; font: 12px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: #101c18; background: #fff; }
+  body { margin: 0; padding: 0 3px; font: 12px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: #2a1d12; background: #fff; }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 2px solid #00C878; }
-  .marca { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 650; color: #064E3B; letter-spacing: -.01em; }
-  .marca img { width: 32px; height: 31px; }
-  .impresso { color: #64746e; font-size: 11px; text-align: right; }
+  header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 2px solid #d9731a; }
+  .marca { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 650; color: #5e3514; letter-spacing: -.01em; }
+  .marca img { width: 32px; height: 32px; }
+  .impresso { color: #7a6249; font-size: 11px; text-align: right; }
   h1 { font-size: 24px; margin: 22px 0 2px; letter-spacing: -.02em; font-weight: 650; }
-  .sub { color: #64746e; margin: 0 0 18px; }
+  .sub { color: #7a6249; margin: 0 0 18px; }
   .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 22px; }
-  .kpi { border: 1px solid #e3e9e6; border-radius: 10px; padding: 10px 14px; }
-  .kpi span { display: block; color: #64746e; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
+  .kpi { border: 1px solid #e0cba6; border-radius: 10px; padding: 10px 14px; }
+  .kpi span { display: block; color: #7a6249; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
   .kpi strong { font-size: 18px; font-variant-numeric: tabular-nums; }
-  .kpi.destaque { background: #022C22; border-color: #022C22; color: #fff; }
-  .kpi.destaque span { color: #7fa898; }
-  h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .06em; color: #064E3B; }
+  .kpi.destaque { background: #2a2017; border-color: #2a2017; color: #fff; }
+  .kpi.destaque span { color: #c9a26a; }
+  h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .06em; color: #5e3514; }
   section { margin-bottom: 22px; break-inside: avoid; }
   table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #64746e; padding: 6px 8px; border-bottom: 1px solid #e3e9e6; }
-  td { padding: 7px 8px; border-bottom: 1px solid #eef2f0; }
+  th { text-align: left; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #7a6249; padding: 6px 8px; border-bottom: 1px solid #e0cba6; }
+  td { padding: 7px 8px; border-bottom: 1px solid #efe3cc; }
   tr { break-inside: avoid; }
-  tfoot td { font-weight: 650; border-bottom: 0; border-top: 2px solid #101c18; }
+  tfoot td { font-weight: 650; border-bottom: 0; border-top: 2px solid #2a1d12; }
   .acertos { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-  .acertos li { display: flex; justify-content: space-between; align-items: center; background: #e3f8ee; border-radius: 8px; padding: 9px 14px; }
-  .acertos strong { color: #064E3B; font-size: 14px; }
-  .ok { color: #008F63; font-weight: 600; }
-  footer { color: #64746e; font-size: 10.5px; text-align: center; margin-top: 28px; padding-top: 10px; border-top: 1px solid #e3e9e6; }
+  .acertos li { display: flex; justify-content: space-between; align-items: center; background: #f6e0c4; border-radius: 8px; padding: 9px 14px; }
+  .acertos strong { color: #5e3514; font-size: 14px; }
+  .ok { color: #4f7a3a; font-weight: 600; }
+  footer { color: #7a6249; font-size: 10.5px; text-align: center; margin-top: 28px; padding-top: 10px; border-top: 1px solid #e0cba6; }
 </style></head><body>
-<header><div class="marca"><img src="${logo}" alt="">Chosen Finance</div><div class="impresso">Impresso em<br>${impresso}</div></header>
+<header><div class="marca"><img src="${logo}" alt="">Tesouraria da Taverna</div><div class="impresso">Impresso em<br>${impresso}</div></header>
 <h1>${esc(ev.nome)}</h1><p class="sub">Evento de ${dataBr(ev.data)} · ${ev.pessoas.length} participantes</p>
 <div class="kpis">
   <div class="kpi destaque"><span>Total</span><strong>${moeda(d.cobrado)}</strong></div>
@@ -1221,7 +1222,7 @@ $("exportarEvento").addEventListener("click", tentar(async () => {
 <section><h2>Quem paga quem</h2>${d.acertos.length
   ? `<ul class="acertos">${d.acertos.map(a => `<li><span><b>${esc(a.de)}</b> paga para <b>${esc(a.para)}</b>${ev.pix_chave && ev.pessoas.some(p => (p.grupo ?? p.nome) === a.para && p.nome === ev.pix_nome) ? ` · Pix: ${esc(ev.pix_chave)}` : ""}</span><strong>${moeda(a.valor)}</strong></li>`).join("")}</ul>`
   : `<p class="ok">Ninguém deve nada: já está tudo acertado.</p>`}</section>
-<footer>Gerado pelo Chosen Finance</footer>
+<footer>Gerado pela Tesouraria da Taverna</footer>
 <script src="/vendor/html2pdf.js"></script>
 </body></html>`);
   const arquivo = new File([pdf], `${titulo}.pdf`, { type: "application/pdf" });
@@ -1417,7 +1418,7 @@ async function carregarCartoes() {
     </article>`).join("") || `<p class="fraco">Nenhum cartão cadastrado.</p>`;
 }
 
-function abrirCartao(c = { cor: "#008f63", ativo: true }) {
+function abrirCartao(c = { cor: "#d9731a", ativo: true }) {
   const f = $("formCartao");
   f.dataset.id = c.id ?? "";
   $("tCartao").textContent = c.id ? "Editar cartão" : "Novo cartão";

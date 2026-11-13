@@ -67,7 +67,7 @@ export function contexto(transacoes, gastosManuais, hoje = new Date().toISOStrin
   return linhas.join("\n");
 }
 
-const SISTEMA = dados => `Você é o assistente financeiro pessoal do app Chosen Finance. Responda em português do Brasil,
+const SISTEMA = dados => `Você é o assistente financeiro pessoal do app Tesouraria da Taverna. Responda em português do Brasil,
 direto e prático, como um amigo que entende de finanças. Use só os dados abaixo: se a resposta não estiver neles, diga
 que não sabe. Não invente valores nem estabelecimentos. Ao sugerir cortes, cite a categoria ou o estabelecimento e quanto
 daria para economizar por mês. Formate com parágrafos curtos, listas com "- " e **negrito** para valores.

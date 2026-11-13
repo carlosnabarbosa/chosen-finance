@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chosen
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: chosen_finance
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chosen -d chosen_finance"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://chosen:${DB_PASSWORD}@db:5432/chosen_finance
+      DEMO_DATABASE_URL: postgres://chosen:${DB_PASSWORD}@db:5432/chosen_finance_demo
+      APP_PASSWORD: ${APP_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      OLLAMA_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "192.168.18.197:4780:4780"
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - /home/carlos/ChosenFinance/entrada:/entrada
+volumes:
+  pgdata:

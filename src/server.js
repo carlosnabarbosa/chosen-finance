@@ -10,10 +10,11 @@ import { contexto, conversar, validarMensagens } from "./assistente.js";
 import { lerFoto, lerNfce, limparItens } from "./recibo.js";
 import * as pix from "./pix.js";
 import { abrirDemo, popularDemo } from "./demo.js";
+import { proteger } from "./seguranca.js";
 
 const PORT = Number(process.env.PORT || 4780);
 const PUBLIC = new URL("../public/", import.meta.url).pathname;
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2" };
 const HTML2PDF = new URL("../node_modules/html2pdf.js/dist/html2pdf.bundle.min.js", import.meta.url);
 const MAX_UPLOAD = 20 * 1024 * 1024;
 // lida a cada pedido, como o CHANGELOG: um release com o servidor no ar já aparece sem reiniciar
@@ -226,6 +227,7 @@ http.createServer(async (req, res) => {
     res.end(type.startsWith("application/json") ? JSON.stringify(body) : body);
   };
   try {
+    if (await proteger(req, res, url)) return;
     const rota = rotas[`${req.method} ${url.pathname}`];
     if (rota) {
       const r = await rota(req, url, res);
@@ -241,6 +243,7 @@ http.createServer(async (req, res) => {
     if (res.headersSent) return res.end(); // caiu no meio do streaming: só fecha
     // regex inválida e JSON malformado são erro de quem chamou; 23xxx é violação de constraint (nome repetido, data inválida...)
     const status = e.status ?? (e instanceof SyntaxError || /^(23|22)/.test(e.code ?? "") ? 400 : 500);
-    send(status, { erro: e.code === "23505" ? "já existe um cadastro com esse nome" : e.message });
+    if (status >= 500) console.error(e);
+    send(status, { erro: e.code === "23505" ? "já existe um cadastro com esse nome" : status >= 500 ? "erro interno" : e.message });
   }
-}).listen(PORT, "127.0.0.1", () => console.log(`Chosen Finance em http://127.0.0.1:${PORT} · importa sozinho o que cair em ${PASTA}`));
+}).listen(PORT, process.env.HOST || "127.0.0.1", () => console.log(`Tesouraria da Taverna em http://127.0.0.1:${PORT} · importa sozinho o que cair em ${PASTA}`));

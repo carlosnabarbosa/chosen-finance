@@ -1,0 +1,34 @@
+# Traz as atualizações do repositório original (JeanBernardino/chosen-finance) para este fork.
+# Roda todo dia e pode ser disparado à mão em Actions. Se houver conflito com as mudanças
+# da Taverna, o job falha (o GitHub avisa por e-mail) e nada é alterado.
+name: Sincronizar com o original
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Mesclar o original
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add original https://github.com/JeanBernardino/chosen-finance.git
+          git fetch original main
+          if git merge-base --is-ancestor original/main HEAD; then
+            echo "Nada novo no original."
+            exit 0
+          fi
+          if ! git merge --no-edit original/main; then
+            git merge --abort
+            echo "::error::Conflito ao mesclar o original com as mudanças da Taverna. Resolva manualmente."
+            exit 1
+          fi
+          git push origin HEAD:main
