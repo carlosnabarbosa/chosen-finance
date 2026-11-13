@@ -68,6 +68,10 @@ ${erro ? `<p class="erro">${erro}</p>` : ""}<button>Entrar</button></form></html
  */
 export async function proteger(req, res, url) {
   for (const [k, v] of Object.entries(CABECALHOS)) res.setHeader(k, v);
+  // registro de acesso: IP, método, caminho, status e tempo (docker compose logs app)
+  const inicio = Date.now();
+  res.on("finish", () => console.log(`acesso ${req.socket.remoteAddress} ${req.method} ${url.pathname} ${res.statusCode} ${Date.now() - inicio}ms host=${req.headers.host ?? "-"}`));
+  res.on("close", () => { if (!res.writableFinished) console.log(`acesso ${req.socket.remoteAddress} ${req.method} ${url.pathname} FECHADA-SEM-RESPOSTA host=${req.headers.host ?? "-"}`); });
   const responder = (status, corpo, extra = {}) => { res.writeHead(status, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", ...extra }); res.end(corpo); return true; };
 
   // Host fora da lista: barra DNS rebinding (site malicioso apontando um domínio para este IP)
